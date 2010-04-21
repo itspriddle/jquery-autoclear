@@ -38,42 +38,38 @@
       };
     };
 
-    this.bind({
-      'focus.autoclear blur.autoclear': function (event) {
-        var self = $(this),
-            currentValue = jQuery.trim(this.value),
-            defaultValue = this.title;
-            
-        if (event.type === "focus") {
-          if (currentValue === defaultValue) {
-            self.trigger('clear.autoclear');
-          };
-        } else {
-          if (currentValue === "" || currentValue === defaultValue) {
-            self.trigger('default.autoclear');
-          };
-        };
-      },
-      'clear.autoclear': function () {
-        var self = $(this);
-        
-        this.value = '';
+    this.live('focus.autoclear blur.autoclear', function (event) {
+      var self = $(this),
+          currentValue = jQuery.trim(this.value),
+          defaultValue = this.title;
 
-        if (!self.hasClass(settings.otherClass)) {
-          self.removeClass(settings.defaultClass).addClass(settings.otherClass);
-          settings.callback.call(this, 'clear');
+      if (event.type === "focusin") {
+        if (currentValue === defaultValue) {
+          self.trigger('clear.autoclear');
         };
-      },
-      'default.autoclear': function () {
-        var self = $(this);
-        
-        this.value = this.title;
+      } else {
+        if (currentValue === "" || currentValue === defaultValue) {
+          self.trigger('default.autoclear');
+        };
+      };
+    }).live('clear.autoclear', function () {
+      var self = $(this);
+      
+      this.value = '';
 
-        if (!self.hasClass(settings.defaultClass)) {
-          self.removeClass(settings.otherClass).addClass(settings.defaultClass);
-          settings.callback.call(this, 'default');
-        };
-      }
+      if ( ! self.hasClass(settings.otherClass)) {
+        self.removeClass(settings.defaultClass).addClass(settings.otherClass);
+        settings.callback.call(this, 'clear');
+      };
+    }).live('default.autoclear', function () {
+      var self = $(this);
+      
+      this.value = this.title;
+
+      if ( ! self.hasClass(settings.defaultClass)) {
+        self.removeClass(settings.otherClass).addClass(settings.defaultClass);
+        settings.callback.call(this, 'default');
+      };
     });
     
     this.each(function () {
@@ -99,13 +95,13 @@
         });
       };      
       
-      if (!set(this, 'title') && !set(this, 'value')) {
+      if ( ! set(this, 'title') && ! set(this, 'value')) {
         this.title = settings.defaultValue;
         self.trigger('default.autoclear');
-      } if (!set(this, 'title')) {
+      } if ( ! set(this, 'title')) {
         this.title = this.value;
         self.trigger('default.autoclear');
-      } else if (!set(this, 'value')) {
+      } else if ( ! set(this, 'value')) {
         self.trigger('default.autoclear');
       } else {
         self.addClass(settings.otherClass);
